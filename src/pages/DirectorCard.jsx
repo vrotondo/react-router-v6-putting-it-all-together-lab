@@ -4,7 +4,8 @@ function DirectorCard() {
     const { id } = useParams();
     const { directors, updateDirector } = useOutletContext();
 
-    const director = directors.find(d => d.id === id);
+    // Find the director - convert numeric IDs to string for comparison
+    const director = directors.find(d => d.id == id); // Using loose equality to match string/number IDs
 
     if (!director) {
         return <h2>Director not found.</h2>;

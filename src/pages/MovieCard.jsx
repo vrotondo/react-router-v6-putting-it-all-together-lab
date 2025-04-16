@@ -6,7 +6,8 @@ function MovieCard() {
 
   if (!director) return <h2>Director not found.</h2>;
 
-  const movie = director.movies.find(m => m.id === movieId);
+  // Using loose equality to match string/number IDs
+  const movie = director.movies.find(m => m.id == movieId);
   if (!movie) return <h2>Movie not found.</h2>;
 
   return (

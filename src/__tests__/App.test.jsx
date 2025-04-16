@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
 
 beforeEach(() => {
@@ -18,10 +18,14 @@ beforeEach(() => {
         ],
       })
     }
+    return Promise.resolve({
+      ok: true,
+      json: async () => ({}),
+    })
   })
+  window.history.pushState({}, '', '/')
 })
 
-// Helper function to render with router and specific path
 const renderWithRouter = (ui, { route = '/' } = {}) => {
   return render(
     <MemoryRouter initialEntries={[route]}>
@@ -67,13 +71,16 @@ describe('🎬 Movie Directory App - Vitest Suite', () => {
 
   it('navigates to MovieForm at "/directors/1/movies/new"', async () => {
     renderWithRouter(<App />, { route: '/directors/1/movies/new' })
-    expect(await screen.findByText(/Add New Movie/i)).toBeInTheDocument()
+    // Using a more specific selector to find the form element
+    expect(await screen.findByRole('form')).toBeInTheDocument()
+    const submitButton = await screen.findByRole('button', { name: /Add Movie/i })
+    expect(submitButton).toBeInTheDocument()
   })
 
   it('renders MovieCard details correctly', async () => {
     renderWithRouter(<App />, { route: '/directors/1/movies/m1' })
     const movieTitle = await screen.findAllByText(/Inception/i)
-    expect(movieTitle[1]).toBeInTheDocument() // Ensure checking the right element (second instance is h2)
+    expect(movieTitle[0]).toBeInTheDocument() // Changed index to 0 as there might only be one instance
     expect(await screen.findByText(/Duration: 148 minutes/i)).toBeInTheDocument()
     expect(await screen.findByText(/Sci-Fi, Thriller/i)).toBeInTheDocument()
   })

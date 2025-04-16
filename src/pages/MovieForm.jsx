@@ -20,6 +20,7 @@ function MovieForm() {
       time: parseInt(time),
       genres: genres.split(",").map((genre) => genre.trim()),
     };
+
     fetch(`http://localhost:4000/directors/${id}`, {
       method: "PATCH",
       headers: {
@@ -32,19 +33,20 @@ function MovieForm() {
         return r.json();
       })
       .then(data => {
-        console.log(data);
         // handle context/state changes
         updateDirector(data);
         // navigate to newly created movie page
         navigate(`/directors/${id}/movies/${newMovie.id}`);
       })
-      .catch(console.log);
+      .catch(error => {
+        console.error("Error adding movie:", error);
+      });
   };
 
   return (
     <div>
       <h2>Add New Movie</h2>
-      <form onSubmit={handleSubmit}>
+      <form role="form" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Movie Title"
